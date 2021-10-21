@@ -1,4 +1,29 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+
+class Ap {
+  Ap(this.a, this.d, this.n);
+
+  final int a;
+  final int d;
+  final int n;
+}
+
+Stream<Ap> _input() async* {
+  List<int> a = [1, 2, 3, 4, 5];
+  List<int> d = [1, 2, 3, 4, 5];
+  List<int> n = [6, 7, 8, 9, 10];
+  int x = a[Random().nextInt(a.length)];
+  int y = d[Random().nextInt(d.length)];
+  int z = n[Random().nextInt(n.length)];
+
+  yield Ap(x, y, z);
+}
+
+Stream _Ap(Stream <Ap> a) {
+  return
+}
 
 void main() {
   runApp(const MyApp());
@@ -20,6 +45,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
@@ -30,13 +56,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
+  void _increment() {
+    _Ap(_input()).listen((event) {
+      print(event);
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,20 +71,15 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const <Widget>[
+              Text(
+                  'You have pushed the button this many times:'),
+            ]
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: _increment,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),

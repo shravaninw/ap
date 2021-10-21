@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -31,35 +32,8 @@ Stream<int> _output(Ap ap) async* {
   }
 }
 
-Stream<int> _Ap(Stream<Ap> a) {
-  return a.asyncExpand((event) => _output(event).map((events) {
-        //print(events);
-        return events;
-      }));
-  // a.listen((event) {
-  //   print(event.a);
-  // });
-  // return a.asyncExpand((value) =>
-  //   print(value.a);
-  //   return _output(value).m
-  //     event,
-  //   ) {
-  //     print(value.d);
-  //     int val = value.a;
-  //     int init = value.a;
-  //     int dif = value.d;
-  //     for (int i = 1; i < value.n; i++) {
-  //       val = val + dif;
-  //     }
-  //     return val;
-  //   });
-  // });
-  //   Stream<int> _ap;
-  //
-  //     return()
-  //   }
-  //   return _ap;
-  // });
+Stream<int> _ap(Stream<Ap> a) {
+  return a.asyncExpand((event) => _output(event).map((event) => event));
 }
 
 void main() {
@@ -92,24 +66,59 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  void _increment() {
-    _Ap(_input()).listen((event) {
-      print('AP $event');
-    });
-  }
+  StreamController<Ap> controller = StreamController.broadcast();
 
   @override
   Widget build(BuildContext context) {
+    List<int> a = [1, 2, 3, 4, 5];
+    List<int> d = [1, 2, 3, 4, 5];
+    List<int> n = [6, 7, 8, 9, 10];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Text(''),
+      body: _buildUserList(context),
       floatingActionButton: FloatingActionButton(
-        onPressed: _increment,
+        onPressed: () {
+          int x = a[Random().nextInt(a.length)];
+          int y = d[Random().nextInt(d.length)];
+          int z = n[Random().nextInt(n.length)];
+          controller.add(Ap(x, y, z));
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
     );
   }
+
+  StreamBuilder<int> _buildUserList(BuildContext context) {
+    List<int> a = [];
+    return StreamBuilder(
+      stream: _ap(controller.stream),
+      builder: (context, AsyncSnapshot<int> snapshot) {
+        print('hh ${snapshot.data}');
+        if (snapshot.hasData) {
+          a.add(snapshot.data!);
+          return ListView.builder(
+              itemCount: a.length,
+              itemBuilder: (_, index) {
+                return Text(a[index].toString());
+              });
+        } else
+          return Center(child: CircularProgressIndicator());
+        // return ListView.builder(
+        //   itemBuilder: (_, index) {
+        //     final itemtodo = todos;
+        //     return _buildListItem(itemtodo, context);
+        //   },
+        //   itemCount: ,
+        // );
+      },
+    );
+  }
+
+// Widget _buildListItem(Object itemtodo, BuildContext context) {
+//   return Center(child: Text('${itemtodo}'));
+// }
 }

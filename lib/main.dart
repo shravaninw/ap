@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 class Ap {
   Ap(this.a, this.d, this.n);
@@ -32,8 +33,11 @@ Stream<int> _output(Ap ap) async* {
   }
 }
 
-Stream<int> _ap(Stream<Ap> a) {
-  return a.asyncExpand((event) => _output(event).map((event) => event));
+Stream<List<int>> _ap(Stream<Ap> a) {
+  return a
+      .asyncExpand((event) => _output(event))
+      .map((event) => [event])
+      .scan((accumulated, value, index) => accumulated..addAll(value), []);
 }
 
 void main() {
@@ -92,33 +96,24 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  StreamBuilder<int> _buildUserList(BuildContext context) {
+  StreamBuilder<List<int>> _buildUserList(BuildContext context) {
     List<int> a = [];
     return StreamBuilder(
       stream: _ap(controller.stream),
-      builder: (context, AsyncSnapshot<int> snapshot) {
-        print('hh ${snapshot.data}');
-        if (snapshot.hasData) {
-          a.add(snapshot.data!);
-          return ListView.builder(
-              itemCount: a.length,
-              itemBuilder: (_, index) {
-                return Text(a[index].toString());
-              });
-        } else
-          return Center(child: CircularProgressIndicator());
-        // return ListView.builder(
-        //   itemBuilder: (_, index) {
-        //     final itemtodo = todos;
-        //     return _buildListItem(itemtodo, context);
-        //   },
-        //   itemCount: ,
-        // );
+      builder: (context, AsyncSnapshot<List<int>> snapshot) {
+        final todos = snapshot.data ?? [];
+        return ListView.builder(
+          itemCount: todos.length,
+          itemBuilder: (_, index) {
+            final itemtodo = todos[index];
+            return _buildListItem(itemtodo, context);
+          },
+        );
       },
     );
   }
 
-// Widget _buildListItem(Object itemtodo, BuildContext context) {
-//   return Center(child: Text('${itemtodo}'));
-// }
+  Widget _buildListItem(int itemUser, BuildContext context) {
+    return Text(itemUser.toString());
+  }
 }

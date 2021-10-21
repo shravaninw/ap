@@ -21,8 +21,45 @@ Stream<Ap> _input() async* {
   yield Ap(x, y, z);
 }
 
-Stream _Ap(Stream <Ap> a) {
-  return
+Stream<int> _output(Ap ap) async* {
+  print('${ap.a}   ${ap.d}   ${ap.n}');
+  int val = ap.a;
+  int dif = ap.d;
+  for (int i = 1; i <= ap.n; i++) {
+    yield val;
+    val = val + dif;
+  }
+}
+
+Stream<int> _Ap(Stream<Ap> a) {
+  return a.asyncExpand((event) => _output(event).map((events) {
+        //print(events);
+        return events;
+      }));
+  // a.listen((event) {
+  //   print(event.a);
+  // });
+  // return a.asyncExpand((value) =>
+  //   print(value.a);
+  //   return _output(value).m
+  //     event,
+  //   ) {
+  //     print(value.d);
+  //     int val = value.a;
+  //     int init = value.a;
+  //     int dif = value.d;
+  //     for (int i = 1; i < value.n; i++) {
+  //       val = val + dif;
+  //     }
+  //     return val;
+  //   });
+  // });
+  //   Stream<int> _ap;
+  //
+  //     return()
+  //   }
+  //   return _ap;
+  // });
 }
 
 void main() {
@@ -45,7 +82,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
@@ -58,10 +94,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   void _increment() {
     _Ap(_input()).listen((event) {
-      print(event);
+      print('AP $event');
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -69,15 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const <Widget>[
-              Text(
-                  'You have pushed the button this many times:'),
-            ]
-        ),
-      ),
+      body: Text(''),
       floatingActionButton: FloatingActionButton(
         onPressed: _increment,
         tooltip: 'Increment',

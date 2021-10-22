@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -106,14 +107,11 @@ class _MyHomePageState extends State<MyHomePage> {
           itemCount: todos.length,
           itemBuilder: (_, index) {
             final itemtodo = todos[index];
-            return _buildListItem(itemtodo, context);
+            print(itemtodo);
+            return Text('${itemtodo}');
           },
         );
       },
     );
-  }
-
-  Widget _buildListItem(int itemUser, BuildContext context) {
-    return Text(itemUser.toString());
   }
 }
